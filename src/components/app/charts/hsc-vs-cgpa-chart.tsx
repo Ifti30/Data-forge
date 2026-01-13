@@ -1,68 +1,56 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Scatter, ScatterChart, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import type { StudentWithCgpa } from "@/lib/types";
+import { useMemo } from 'react';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import {
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Label,
+  ResponsiveContainer,
+} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import type { StudentWithCgpa } from '@/lib/types';
+import { getHscVsCgpaData } from '@/lib/chart-data-utils';
 
-function getPerformanceGroup(cgpa: number): 'high' | 'mid' | 'fail' {
-    if (cgpa >= 3.5) return 'high';
-    if (cgpa < 2.0) return 'fail';
-    return 'mid';
+interface HscVsCgpaChartProps {
+  students: StudentWithCgpa[];
 }
 
-export function HscVsCgpaChart({ students }: { students: StudentWithCgpa[] }) {
-  const chartData = React.useMemo(() => {
-    return students.map(s => ({
-      hsc_gpa: s.hsc_gpa,
-      cgpa: s.cgpa,
-      performance: getPerformanceGroup(s.cgpa),
-    }));
-  }, [students]);
-  
-  const chartConfig = {
-    cgpa: {
-      label: "CGPA",
-    },
-    hsc_gpa: {
-      label: "HSC GPA",
-      color: "hsl(var(--chart-1))",
-    },
-  };
+const chartConfig = {
+  cgpa: {
+    label: "CGPA",
+    color: "hsl(195, 74%, 65%)",
+  },
+} satisfies ChartConfig;
+
+export function HscVsCgpaChart({ students }: HscVsCgpaChartProps) {
+  const data = useMemo(() => getHscVsCgpaData(students), [students]);
 
   return (
-    <Card>
+    <Card className='col-span-1'>
       <CardHeader>
         <CardTitle>HSC GPA vs. University CGPA</CardTitle>
-        <CardDescription>
-          Shows the correlation between high school and university results.
-        </CardDescription>
+        <CardDescription>A scatter plot showing the correlation between HSC GPA and university CGPA.</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-[250px] w-full">
-          <ScatterChart
-            margin={{
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
-            }}
-          >
-            <CartesianGrid />
-            <XAxis type="number" dataKey="hsc_gpa" name="HSC GPA" unit="" domain={[1, 5]} />
-            <YAxis type="number" dataKey="cgpa" name="CGPA" unit="" domain={[0, 4]}/>
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<ChartTooltipContent indicator="dot" />} />
-            <Scatter name="Students" data={chartData} fill="var(--color-hsc_gpa)" />
+        <ChartContainer config={chartConfig} className="h-[350px] w-full">
+          <ScatterChart margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis type="number" dataKey="hscGpa" domain={[2, 5]} tickFormatter={(tick) => tick.toFixed(1)}>
+              <Label value="HSC GPA" offset={-15} position="insideBottom" />
+            </XAxis>
+            <YAxis type="number" dataKey="cgpa" domain={[0, 4]} tickFormatter={(tick) => tick.toFixed(1)}>
+              <Label value="University CGPA" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
+            </YAxis>
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dot" />}
+            />
+            <Scatter data={data} fill="var(--color-cgpa)" />
           </ScatterChart>
         </ChartContainer>
       </CardContent>

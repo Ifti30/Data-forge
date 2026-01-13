@@ -7,6 +7,12 @@
   packages = [
     pkgs.nodejs_20
     pkgs.zulu
+    (pkgs.python3.withPackages (ps: [
+      ps.pandas
+      ps.numpy
+      ps.pip
+    ]))
+    pkgs.sudo
   ];
   # Sets environment variables in the workspace
   env = {};

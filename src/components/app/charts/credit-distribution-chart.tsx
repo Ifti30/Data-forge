@@ -15,29 +15,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export function CreditDistributionChart({ students }: { students: StudentWithCgpa[] }) {
-  const chartData = React.useMemo(() => {
-    const creditCounts: Record<string, number> = {};
-
-    students.forEach(student => {
-        Object.values(student.semesters).forEach(semester => {
-            const credits = semester.creditHours;
-            creditCounts[credits] = (creditCounts[credits] || 0) + 1;
-        })
-    });
-
-    return Object.entries(creditCounts)
-      .map(([creditCount, studentCount]) => ({
-        name: `${creditCount} Credits`,
-        count: studentCount,
-      }))
-      .sort((a, b) => {
-        const aNum = parseInt(a.name);
-        const bNum = parseInt(b.name);
-        return aNum - bNum;
-      });
-  }, [students]);
-
+export function CreditDistributionChart({ chartData }: { chartData: any[] }) {
   const chartConfig = {
     count: {
       label: "Semesters",

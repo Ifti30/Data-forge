@@ -1,18 +1,14 @@
-'use client';
-
 import * as React from 'react';
 import { processUploadedData } from '@/app/actions';
 import type { GenerationResult, Student } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { SidebarProvider, Sidebar, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { ParameterSidebar } from '@/components/app/parameter-sidebar';
 import { Dashboard } from '@/components/app/dashboard';
 import { Logo } from '@/components/app/logo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { UploadCloud, FileJson } from 'lucide-react';
-import Link from 'next/link';
 
 export default function UploadPage() {
   const [result, setResult] = React.useState<GenerationResult | null>(null);
@@ -76,7 +72,7 @@ export default function UploadPage() {
             </div>
             <div className="p-4">
                 <Button asChild className='w-full'>
-                    <Link href="/">Back to Generator</Link>
+                    <a href="/">Back to Generator</a>
                 </Button>
             </div>
         </div>
@@ -89,7 +85,35 @@ export default function UploadPage() {
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 sm:gap-6 sm:p-6">
           {result ? (
-            <Dashboard result={result} isLoading={isLoading} />
+            <>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Total Students
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {result.data.length}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Total Credits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {result.data.reduce((acc, student) => acc + student.total_credits_earned, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <Dashboard result={result} isLoading={isLoading} />
+            </>
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <Card

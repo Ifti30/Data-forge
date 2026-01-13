@@ -1,0 +1,16 @@
+.slider-container {
+  padding: 10px 0;
+}
+
+.rc-slider-handle {
+  background-color: #007bff;
+  border: 2px solid #007bff;
+}
+
+.rc-slider-track {
+  background-color: #007bff;
+}
+
+.rc-slider-rail {
+  background-color: #e9ecef;
+}
